@@ -49,7 +49,7 @@ def on_message(client, userdata, msg):
 #    print(response)
 
 
-client = mqtt.Client()
+client = mqtt.Client(client_id="adfadsfasdf", protocol=mqtt.MQTTv31)
 client.on_connect = on_connect
 client.on_message = on_message
 
