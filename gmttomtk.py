@@ -7,18 +7,17 @@ mcs_data_format = {
       {
          "dataChnId":"lora_temp",
          "values":{
-            "value":"28.00"
+            "value":"00.00"
          }
       },
       {
          "dataChnId":"lora_humi",
          "values":{
-            "value":"27.00"
+            "value":"00.00"
          }
       }
    ]
 }
-
 
 # The callback for when the client receives a CONNACK response from the server.
 def on_connect(client, userdata, flags, rc):
@@ -26,35 +25,37 @@ def on_connect(client, userdata, flags, rc):
 
     # Subscribing in on_connect() means that if we lose the connection and
     # reconnect then subscriptions will be renewed.
-    client.subscribe("client/200000019/200000019-GIOT-MAKER")
+    client.subscribe("GIOT-GW/UL/1C497B498D80")
 
 # The callback for when a PUBLISH message is received from the server.
 def on_message(client, userdata, msg):
-#    print(msg.topic+" "+str(msg.payload))
+    # print(msg.topic+" "+str(msg.payload))
     json_extractor = json.loads(msg.payload)
-#    print(json_extractor['recv'])
-#    print(json_extractor['macAddr'])
-#    print(json_extractor['data'].decode("hex"))
-    string_value = json_extractor['data'].decode("hex")
-#    print(string_value[1:6])
-#    print(string_value[6:11])
-    mcs_data_format['datapoints'][0]['values']['value'] = string_value[1:6]
-    mcs_data_format['datapoints'][1]['values']['value'] = string_value[6:11]
-#    print(mcs_data_format)
-    req = urllib2.Request('http://api.mediatek.com/mcs/v2/devices/DUgyOyLY/datapoints')
-    req.add_header('deviceKey', 'XOhNhdy4vxfLxr2B')
-    req.add_header('Content-Type', 'application/json')
+    # print(json_extractor[0]['channel'])
+    # print(json_extractor[0]['macAddr'])
+    # print(json_extractor[0]['data'].decode("hex"))
 
-    response = urllib2.urlopen(req, json.dumps(mcs_data_format))
-#    print(response)
+    if json_extractor[0]['macAddr'] == "000000000500005f":
 
+        string_value = json_extractor[0]['data'].decode("hex")
+        # print(string_value[1:6])
+        # print(string_value[6:11])
+        mcs_data_format['datapoints'][0]['values']['value'] = string_value[1:6]
+        mcs_data_format['datapoints'][1]['values']['value'] = string_value[6:11]
+        # print(mcs_data_format)
+        req = urllib2.Request('http://api.mediatek.com/mcs/v2/devices/D2vxFwNV/datapoints')
+        req.add_header('deviceKey', 'd98BVa78SaYEj8MG')
+        req.add_header('Content-Type', 'application/json')
 
-client = mqtt.Client(client_id="adfadsfasdf", protocol=mqtt.MQTTv31)
+        response = urllib2.urlopen(req, json.dumps(mcs_data_format))
+        # print(response)
+
+client = mqtt.Client(client_id="1C497B498D81", protocol=mqtt.MQTTv31)
 client.on_connect = on_connect
 client.on_message = on_message
 
-client.username_pw_set("200000019", password="86873039")
-client.connect("52.193.146.103", 80, 60)
+client.username_pw_set("lazyengineers", password="lazyengineers")
+client.connect("104.155.21.63", 1883, 60)
 
 # Blocking call that processes network traffic, dispatches callbacks and
 # handles reconnecting.
