@@ -1,22 +1,19 @@
 #include "LDHT.h"
 
 #define DHTPIN 7          // what pin we're connected to
-#define DHTTYPE DHT22     // using DHT11 sensor
+#define DHTTYPE DHT22     // using DHT22 sensor
 
 LDHT dht(DHTPIN, DHTTYPE);
-
-
-
 
 float tempC = 0.0, Humi = 0.0;
 char readcharbuffer[20];
 int readbuffersize;
-char temp_input;  
+char temp_input;
 
 void setup(){
-  
-    Serial.begin(9600);
-    Serial1.begin(9600);
+
+  Serial.begin(9600);
+  Serial1.begin(9600);
 
 	dht.begin();
 
@@ -57,19 +54,20 @@ void loop(){
 		Serial.print(dht.readHeatIndex(tempC, Humi));
 		Serial.print(dht.readHumidity());
 		Serial.println("\"");
-		
 
 		Serial1.print("AT+DTX=11,\"T");
 		Serial1.print(dht.readHeatIndex(tempC, Humi));
 		Serial1.print(dht.readHumidity());
 		Serial1.println("\"");
 
-
 		//Serial1.println("AT+DTX=11,\"12345ABCdef\"");
-
-
 	}
 
+  if(Serial1.read()){
+    Serial.print(Serial1.read());
+    Serial1.print("AT+DRX?");
+  }
+  
 	delay(1000);
 
 	/*

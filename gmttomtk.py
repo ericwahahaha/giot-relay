@@ -55,7 +55,20 @@ client.on_connect = on_connect
 client.on_message = on_message
 
 client.username_pw_set("lazyengineers", password="lazyengineers")
-client.connect("104.155.21.63", 1883, 60)
+client.connect("104.155.21.63", port=1883, keepalive=60)
+
+downlink_data = [{
+    "macAddr": "000000000500005f",
+    "data": "0090",
+    "id": "998877abcd0123",
+    "extra": {
+        "port": 2,
+        "txpara": 6
+    }
+}]
+
+
+client.publish("GIOT-GW/DL/1C497B498D80", payload=json.dumps(downlink_data), qos=0, retain=False)
 
 # Blocking call that processes network traffic, dispatches callbacks and
 # handles reconnecting.
